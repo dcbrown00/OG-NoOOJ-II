@@ -47,4 +47,4 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *show-input-display* #f)
 
 ;; controls whether hovers are allowed
-(define *hover-police?* #t) 
+(define *hover-police?* #f) 
