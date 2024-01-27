@@ -411,7 +411,8 @@
     (('calm)
      (set! (-> this attack) (not arg1))
      (set! (-> this gun) (not arg1))
-     (set! (-> this board) (not arg1))
+     ;; og:jetboard Removed board toggle while in calm mode
+     ;; (set! (-> this board) (not arg1))
      (set! (-> this jump) (not arg1))
      (set! (-> this double-jump) (not arg1))
      (set! (-> this darkjak) (not arg1))
