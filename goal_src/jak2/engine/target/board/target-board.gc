@@ -628,13 +628,21 @@
            )
          )
         (('touched)
+         (when (and (cpad-hold? 0 circle)  ;; og:jetboard mimic jak 3 circle attack
+                    (not (-> self control danger-mode)))
+           (target-start-attack)
+           (target-danger-set! 'board-spin #f)
+           )
          (cond
-           ((and (-> self control danger-mode) ((method-of-type touching-shapes-entry prims-touching?)
-                                                (the-as touching-shapes-entry (-> arg3 param 0))
-                                                (-> self control)
-                                                (the-as uint 1920)
-                                                )
-                 )
+           ((or (cpad-hold? 0 circle)
+                (and (-> self control danger-mode)
+                     ((method-of-type touching-shapes-entry prims-touching?)
+                      (the-as touching-shapes-entry (-> arg3 param 0))
+                      (-> self control)
+                      (the-as uint 1920)
+                      )
+                     )
+                )
             (when (target-send-attack
                     arg0
                     (-> self control danger-mode)
