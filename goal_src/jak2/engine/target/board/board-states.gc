@@ -249,8 +249,7 @@
                    )
           (set! (-> self board unknown-float01) f28-1)
           (+! *target-board-hold-tricks* 1)
-          ;; don't allow hovering if setting is enabled
-          (when (and (> *hover-grab-limit* 0) (> *target-board-hold-tricks* *hover-grab-limit*))
+          (when (and (> *hover-grab-limit* 0) (> *target-board-hold-tricks* *hover-grab-limit*))  ;; og:jetboard cancel hover if limit is reached
             (go target-board-falling)
             )
           (go
