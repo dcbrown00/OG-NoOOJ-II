@@ -121,6 +121,7 @@
   )
 
 (define-extern *target-board-hold-tricks* int)
+(define-extern *hover-grab-limit* int)
 
 ;; WARN: Return type mismatch object vs none.
 (defbehavior target-board-spin-check target ()
@@ -248,6 +249,9 @@
                    )
           (set! (-> self board unknown-float01) f28-1)
           (+! *target-board-hold-tricks* 1)
+          (when (and (> *hover-grab-limit* 0) (> *target-board-hold-tricks* *hover-grab-limit*))  ;; og:jetboard cancel hover if limit is reached
+            (go target-board-falling)
+            )
           (go
             target-board-hold
             (-> *TARGET_BOARD-bank* tricky-jump-height-min)
