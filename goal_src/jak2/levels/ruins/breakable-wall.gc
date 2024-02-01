@@ -268,7 +268,7 @@
        (when (task-node-closed? (game-task-node ruins-mech-introduction))
          (let ((s4-0 (the-as object (-> block param 1))))
            (case (-> (the-as attack-info s4-0) mode)
-             (('mech-punch 'crush)
+             (('mech-punch 'crush) 
               (let ((s3-0
                       (the-as object (mem-copy! (the-as pointer (new 'stack-no-clear 'attack-info)) (the-as pointer s4-0) 160))
                       )
@@ -282,7 +282,7 @@
                      )
                  (the-as touching-shapes-entry (-> block param 0))
                  )
-                (if (logtest? (-> (the-as attack-info s3-0) mask) (attack-mask intersection))
+                (if  (logtest? (-> (the-as attack-info s3-0) mask) (attack-mask intersection)) 
                     (go-virtual hit)
                     )
                 )
@@ -295,6 +295,9 @@
        #t
        )
       )
+      (when (>= (get-jak-speed-meters) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
+            (go-virtual hit)
+            )
     )
   :enter (behavior ()
     (let ((gp-0 (matrix<-transformq! (new 'stack-no-clear 'matrix) (the-as transformq (-> self root trans)))))

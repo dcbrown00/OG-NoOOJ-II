@@ -95,6 +95,9 @@
        #t
        )
       )
+      (when (>= (get-jak-speed-meters) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
+            (go-virtual hit)
+            )
     )
   :enter (behavior ()
     (let ((s5-0 (matrix<-transformq! (new 'stack-no-clear 'matrix) (the-as transformq (-> self root trans)))))
