@@ -381,12 +381,12 @@ This commonly includes things such as:
                  (f1-0 12288.0)
                  )
              (cond
-               ((and (>= f0-0 (* f1-0 f1-0)) *target* (focus-test? *target* board)) ;; OG:Jetboard/No OoJ Added board and changed < into >=
-                (when (!= (-> self sub-state) 0)
+               ((and (< f0-0 (* f1-0 f1-0)) *target* (focus-test? *target* board)) ;; OG:Jetboard/No OoJ Added board
+                (when (nonzero? (-> self sub-state))
                   (send-event (handle->process (-> self arrow)) 'set-position (-> self end-pos))
                   (send-event (handle->process (-> self arrow)) 'modify-flags 1 0)
                   (send-event (handle->process (-> self arrow)) 'map-icon 8)
-                  (set! (-> self sub-state) (the-as uint 0)) 
+                  (set! (-> self sub-state) (the-as uint 0))
                   0
                   )
                 )
