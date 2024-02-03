@@ -393,7 +393,7 @@
         )
       (let ((v1-37 arg1))
         (cond
-          ((or (= v1-37 'spin) (= v1-37 'spin-air) (= v1-37 'board-spin))
+          ((or (= v1-37 'spin) (= v1-37 'spin-air) (= v1-37 'board-spin) (= v1-37 'board-circle))  ;; og-jetboard copy spin attack logic for circle attack
            (set! sv-100 (prims-touching? arg2 (-> self control) (the-as uint 256)))
            (cond
              (sv-100
@@ -437,6 +437,10 @@
              )
            (play-effect-sound (-> self skel effect) arg1 -1.0 38 (the-as basic #f) (cond
                                                                                      ((= arg1 'board-spin)
+                                                                                      (static-sound-name "board-impact")
+                                                                                      )
+                                                                                     ;; og-jetboard added (TODO: different sound effect?)
+                                                                                     ((= arg1 'board-circle)
                                                                                       (static-sound-name "board-impact")
                                                                                       )
                                                                                      ((using-gun? self)
