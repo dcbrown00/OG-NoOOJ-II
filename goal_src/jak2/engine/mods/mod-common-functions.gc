@@ -69,6 +69,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (/ (vector-length (get-transv *target*)) 4096.0)
   )
 
+;; OG:Jetboard/No OoJ add macro to check if the board circle attack is currently active
+(defmacro board-attacking? ()
+  `(or (not (time-elapsed? (-> *target* board last-circle-attack) (seconds 1.0))) (cpad-hold? 0 circle))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
