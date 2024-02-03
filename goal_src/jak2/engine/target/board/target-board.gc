@@ -2033,7 +2033,7 @@
       (target-danger-set! 'board-circle #f)
       )
     ;; if cooldown ok and pressed circle, start attack
-    ((and (time-elapsed? (-> self board last-circle-attack) (seconds 1.0)) (cpad-pressed? 0 circle))
+    ((and *enable-board-circle-attack?* (time-elapsed? (-> self board last-circle-attack) (seconds 1.0)) (cpad-pressed? 0 circle))
       (set-time! (-> self board last-circle-attack))
       (target-start-attack)
       (target-danger-set! 'board-circle #f)
