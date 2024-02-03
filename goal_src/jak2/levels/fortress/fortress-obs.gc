@@ -58,18 +58,16 @@
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (case message
       (('attack)
+      ;; OG:Jetboard/No OoJ replaced ground pound check with jetboard circle attack check
       ;;  (when (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate flop))
-      ;; OG:Jetboard/No OoJ replaced ground pound check with jetboard & check if circle attack is pressed
-       (case (-> (the-as attack-info (-> block param 1)) mode) 
-        (('board) 
-         (if (board-attacking?)
-          (go-virtual die)
-          #f
-         )
+        (case (-> (the-as attack-info (-> block param 1)) mode) 
+          (('board-circle)
+            (go-virtual die)
+            #f
+            )
+          )
         )
-       )
       )
-     )
     )
   :code sleep-code
   )
