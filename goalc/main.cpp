@@ -64,7 +64,8 @@ int main(int argc, char** argv) {
         nrepl_port = 8181;
         break;
       case GameVersion::Jak2:
-        nrepl_port = 8182;
+        nrepl_port = 8181;
+        //nrepl_port = 8182;
         break;
     }
   }

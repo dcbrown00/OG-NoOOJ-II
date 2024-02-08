@@ -96,6 +96,28 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   `(-> *art-control* active-stream)
   )
 
+(defun test-boop ()
+(when *debug-segment*
+(play-sound-file "SND/boop.mp3" 100)
+))
+(defun test-text ((arg1 string))
+(when *debug-segment*
+
+    (clear *temp-string*)
+    (clear *pc-encoded-temp-string*)
+    (format *temp-string* "Test Text: <COLOR_GREEN>~S~%"
+            arg1)
+    )
+    (pc-encode-utf8-string *temp-string* *pc-encoded-temp-string*)
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug-no-zbuf1))
+      ;; reset bucket settings prior to drawing - font won't do this for us, and
+      ;; draw-raw-image can sometimes mess them up. (intro sequence)
+      (dma-buffer-add-gs-set-flusha buf (alpha-1 (new 'static 'gs-alpha :b #x1 :d #x1)) (tex1-1 (new 'static 'gs-tex1 :mmag #x1 :mmin #x1)))
+      (let ((font-ctx (new 'stack 'font-context *font-default-matrix* 365 165 0.0 (font-color default) (font-flags right shadow kerning large))))
+        (set! (-> font-ctx scale) 0.325)
+        (draw-string-adv *pc-encoded-temp-string* buf font-ctx))))
+
+
 ;;This function moves an actor to the given coordinates
 ;;example (move-actor farmer-3 3.0 74.0 -120.0)
 (defun move-actor ((actor-name string) (x float) (y float) (z float))
