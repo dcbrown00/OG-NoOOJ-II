@@ -467,11 +467,17 @@
     (sleep-code)
     )
   )
-
+;; og:jetboard The boulder is slow needs to be faster since we are on jetboard
+(define *boulder-speed-mult* 0.6)
 (defstate chase (tomb-boulder)
   :virtual #t
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (local-vars (v0-0 object))
+      ;;This isnt perfect and could/should be improved in the future.
+    (when  (and (-> self current-pause) (not (or  (string= (-> *game-info* current-continue name) "tomb-boulder-explode") (string= (-> *game-info* current-continue name) "tomb-boulder-climb"))))
+      (set-continue! *game-info* "tomb-boulder-explode" #f)
+      (send-event *target* 'attack-invinc #f (static-attack-info ((id (new-attack-id)) (mode 'big-explosion))))
+    )
     (case message
       (('touch 'attack)
        (if (not (-> self current-pause))
@@ -970,7 +976,14 @@
         (seek! (-> self target-speed) f30-3 (* 20.0 (seconds-per-frame)))
         )
       (seek! (-> self target-speed) f30-3 (seconds-per-frame))
-      (when (or (!= (-> self target-speed) (-> self current-speed)) (time-elapsed? (-> self speed-time) (seconds 0.2)))
+      (when (or (!= (-> self target-speed) (-> self current-speed))
+                (>= (- (current-time) (-> self speed-time)) (seconds 0.2))
+                )
+        ;; og:jetboard Set the boulders speed to be fast, but only if we dont have spider chasing us
+        (if (or  (string= (-> *game-info* current-continue name) "tomb-boulder-explode") (string= (-> *game-info* current-continue name) "tomb-boulder-climb"))
+          (set!  (-> self target-speed) *boulder-speed-mult*)
+        )
+      
         (set! (-> self current-speed) (-> self target-speed))
         (set-time! (-> self speed-time))
         (when *sound-player-enable*

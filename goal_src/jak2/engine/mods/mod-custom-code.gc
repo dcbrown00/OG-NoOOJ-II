@@ -38,7 +38,12 @@
             )
           )
         )
-        
+      
+      ;; og:jetboard This is kind of a hack to make the camera better during daxter chase in mars tomb 
+      (when (process-by-ename "tomb-boulder-4")
+      (set-setting-by-param *setting-control* 'mode-name 'cam-string 0 0)
+      )
+      
       ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
       ;; (when *target* 
       ;;   (if (board-hovering?)
