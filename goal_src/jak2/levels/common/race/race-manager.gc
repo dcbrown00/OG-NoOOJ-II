@@ -360,7 +360,7 @@
   (none)
   )
 
-(defmethod begin-race ((this race-state))
+(defmethod begin-race ((this race-state)) ;; OG:Jetboard Might be important for races
   (format #t "begin-race~%")
   (when (not (logtest? (-> this flags) (race-flags begun)))
     (logior! (-> this flags) (race-flags begun))
@@ -519,7 +519,7 @@
   (none)
   )
 
-(defmethod setup-race ((this race-state))
+(defmethod setup-race ((this race-state)) ;; OG:Jetboard May be important for races
   (set-setting! 'allow-progress #f 0.0 0)
   (send-event (handle->process (-> this arrow)) 'leave)
   (when (logtest? (-> this info flags) (race-info-flags borrow))
@@ -1104,11 +1104,13 @@
                         (* (-> s3-0 ai-spread-factor) (+ (the float (-> s1-0 seek-offset)) (* -3.33 (-> gp-0 suck-factor))))
                         )
                   (when (and (= s2-1 (-> gp-0 i-player)) (logtest? (-> gp-0 flags) (race-flags pidax)))
+                  (logior! (-> *target* draw status) (draw-control-status no-draw-bounds2))
                     (let ((v1-91 'pilot))
                       (if (= (-> s1-0 rider) 1)
-                          (set! v1-91 'pilot-daxter)
+                          (set! v1-91 'pilot)
                           )
-                      (send-event *target* 'change-mode v1-91 sv-400 0 #t)
+                          ;(vector-copy! (-> *target* root trans) (-> *race-info-array* 0 start-sphere)) ;; OG:Jetboard 
+                      (send-event *target* 'change-mode v1-91 sv-400 0 #f)
                       )
                     )
                   )
@@ -1562,6 +1564,21 @@
   )
 
 (define *race-manager* (the-as (pointer race-manager) #f))
+
+(defun race-manager-turbo-from-board ((turbo-event symbol))
+  (when *race-manager*
+    (let* ((race-mgr-proc (the race-manager (ppointer->process *race-manager*)))
+            (rcr-state (-> race-mgr-proc race-state racer-array (-> race-mgr-proc race-state i-player)))
+            (rcr (the vehicle (handle->process (-> rcr-state racer))))
+            )
+      (when rcr
+        (logior! (-> rcr flags) (rigid-body-object-flag player-driving)) ;; fake like player is driving
+        (send-event rcr turbo-event)
+        )
+      )
+    )
+  (none)
+  )
 
 (defmethod deactivate ((this race-manager))
   (persist-with-delay *setting-control* 'music-volume (seconds 3) 'music-volume 'abs 0.0 0)

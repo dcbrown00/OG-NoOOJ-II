@@ -356,8 +356,8 @@
 (defmethod rigid-body-object-method-46 ((this vehicle-racer) (arg0 process-drawable) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
     (('test-ready)
-     (and (and (-> this next-state) (= (-> this next-state name) 'waiting-for-start))
-          (logtest? (-> this flags) (rigid-body-object-flag riding))
+     (or (and (-> this next-state) (= (-> this next-state name) 'waiting-for-start)) ;; OG:Jetboard
+          (focus-test? *target* board) ;; OG:Jetboard
           )
      )
     (('begin-race)
@@ -368,7 +368,8 @@
           (set! (-> this flags)
                 (the-as rigid-body-object-flag (logclear (-> this flags) (rigid-body-object-flag player-grabbed)))
                 )
-          (go (method-of-object this player-control))
+          ;; OG-jetboard keep vehicle-racer in waiting state
+          ;; (go (method-of-object this player-control))
           )
          (else
            (go (method-of-object this racing))
@@ -435,7 +436,7 @@
      )
     (('race-pass)
      (if (logtest? (-> this flags) (rigid-body-object-flag player-driving))
-         (speech-control-method-12 *speech-control* this (if (-> *target* pilot as-daxter?)
+         (speech-control-method-12 *speech-control* this (if (game-task-node stadium-race-class2-race)
                                                              (speech-type speech-type-45)
                                                              (speech-type speech-type-36)
                                                              )
@@ -882,6 +883,36 @@
   (none)
   )
 
+;; OG-jetboard added for syncing position/rotation/turbo between vehicle and board
+(defun vehicle-board-sync ((this vehicle))
+  (when (type-type? (-> this type) vehicle-racer)
+    (let* ((self-position (-> this root trans))
+            (target-position (-> *target* root trans))
+            (dist-diff (vector-vector-distance self-position target-position)))
+      (when (>= dist-diff 0.0) 
+        (vector-copy! (-> this root trans) (-> *target* root trans))
+        )
+      )
+    (quaternion-copy! (-> this root quat) (-> (the board (ppointer->process (-> *target* board board))) root quat)) ;; OG:Jetboard Makes race zoomers rotate with the Jetboard
+    
+    (cond
+      ((logtest? (rigid-body-object-flag turbo-boost) (-> this flags))
+        ;; turbo active
+        (set-target-board-mods-speed 
+          (* 5.0 204800.0) 
+          (* 5.0 409600.0)
+          )
+        )
+      (else
+        ;; turbo over
+        (set-target-board-mods-speed 204800.0 409600.0)
+        )
+      )
+    )
+  
+  (none)
+  )
+
 (defstate waiting-race (vehicle-racer)
   :virtual #t
   :event vehicle-event-handler
@@ -912,12 +943,12 @@
                                                  crate
                                                  civilian
                                                  enemy
-                                                 obstacle
+                                                 ;obstacle ;; OG:Jetboard
                                                  vehicle-sphere
-                                                 hit-by-player-list
+                                                 ;hit-by-player-list ;; OG:Jetboard
                                                  hit-by-others-list
                                                  collectable
-                                                 pusher
+                                                 ;pusher ;; OG:Jetboard
                                                  )
               )
         (set! (-> v1-4 prim-core collide-as) (collide-spec vehicle-sphere))
@@ -927,14 +958,27 @@
   :trans #f
   :code sleep-code
   :post (behavior ()
-    (when (logtest? (-> self flags) (rigid-body-object-flag waiting-for-player))
+    ;; OG-jetboard borrowed turbo logic (normally you get this during player-control state)
+    (when (logtest? (rigid-body-object-flag turbo-boost) (-> self flags))
+      (if (or (time-elapsed? (-> self turbo-boost-time) (the-as time-frame (-> self turbo-boost-duration)))
+              (and (time-elapsed? (-> self turbo-boost-time) (seconds 0.1)) (>= (-> self controls brake) 0.75))
+              )
+        (logclear! (-> self flags) (rigid-body-object-flag turbo-boost))
+        )
+      )
+    (if (cpad-pressed? 0 circle)
+      (vehicle-method-66 self)
+      )
+    ;; OG-jetboard helper function to sync position/rotation/turbo between board and vehicle
+    (vehicle-board-sync self)
+    (when (logtest? (-> self flags) (rigid-body-object-flag waiting-for-player)) 
       (set! (-> self camera-dist2) (vector-vector-distance-squared (-> self root trans) (camera-pos)))
       (set! (-> self player-dist2) (vector-vector-distance-squared (-> self root trans) (target-pos 0)))
       (check-player-get-on self)
       )
-    (vector-reset! (-> self target-acceleration))
+    ;(vector-reset! (-> self target-acceleration))
     (vehicle-method-120 self)
-    (update-transforms (-> self root))
+    ;(update-transforms (-> self root))
     (vehicle-method-119 self)
     (rigid-body-object-method-39 self)
     )
@@ -983,12 +1027,12 @@
                                                  crate
                                                  civilian
                                                  enemy
-                                                 obstacle
+                                                 ;obstacle ;; OG:Jetboard
                                                  vehicle-sphere
-                                                 hit-by-player-list
+                                                 ;hit-by-player-list ;; OG:Jetboard
                                                  hit-by-others-list
                                                  collectable
-                                                 pusher
+                                                 ;pusher ;; OG:Jetboard
                                                  )
               )
         (set! (-> v1-3 prim-core collide-as) (collide-spec vehicle-sphere))

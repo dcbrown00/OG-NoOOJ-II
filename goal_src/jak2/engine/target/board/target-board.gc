@@ -129,8 +129,8 @@
     :turnvv 131072.0
     :tiltv 131072.0
     :tiltvv 2621440.0
-    :transv-max 143360.0
-    :target-speed 102400.0
+    :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+    :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
     :seek0 0.5
     :seek90 0.5
     :seek180 0.5
@@ -246,8 +246,8 @@
                            :turnvv 131072.0
                            :tiltv 16384.0
                            :tiltvv 131072.0
-                           :transv-max 143360.0
-                           :target-speed 102400.0
+                           :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+                           :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
                            :seek0 0.8
                            :seek90 0.8
                            :seek180 0.8
@@ -280,8 +280,8 @@
                             :turnvv 524288.0
                             :tiltv 32768.0
                             :tiltvv 131072.0
-                            :transv-max 143360.0
-                            :target-speed 102400.0
+                            :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+                            :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
                             :fric 0.2
                             :nonlin-fric-dist 1.0
                             :slip-factor 1.0
@@ -309,8 +309,8 @@
     :turnvv 32768.0
     :tiltv 32768.0
     :tiltvv 131072.0
-    :transv-max 143360.0
-    :target-speed 102400.0
+    :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+    :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
     :nonlin-fric-dist 1.0
     :slip-factor 1.0
     :slide-factor 1.0
@@ -387,8 +387,8 @@
                                  :name 'jump
                                  :tiltv 65536.0
                                  :tiltvv 262144.0
-                                 :transv-max 143360.0
-                                 :target-speed 102400.0
+                                 :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+                                 :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
                                  :seek180 0.8
                                  :fric 0.2
                                  :nonlin-fric-dist 1.0
@@ -426,8 +426,8 @@
                                 :turnvv 524288.0
                                 :tiltv 16384.0
                                 :tiltvv 131072.0
-                                :transv-max 143360.0
-                                :target-speed 102400.0
+                                :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+                                :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
                                 :fric 0.2
                                 :nonlin-fric-dist 1.0
                                 :slip-factor 1.0
@@ -452,8 +452,8 @@
                                :turnv 524288.0
                                :tiltv 131072.0
                                :tiltvv 2621440.0
-                               :transv-max 143360.0
-                               :target-speed 102400.0
+                               :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+                               :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
                                :seek0 0.5
                                :seek90 0.5
                                :seek180 0.5
@@ -486,8 +486,8 @@
                             :turnvv 131072.0
                             :tiltv 131072.0
                             :tiltvv 262144.0
-                            :transv-max 143360.0
-                            :target-speed 40960.0
+                            :transv-max 143360.0 ;; OG:Jetboard/No OoJ Set's Jetboards Max Speed
+                            :target-speed 102400.0 ;; OG:Jetboard/No OoJ Set's Max speed that can be reached without sideflips or speed boosts
                             :seek0 0.5
                             :seek90 0.5
                             :seek180 0.5
@@ -554,6 +554,8 @@
                                              )
         )
 
+;; OG-jetboard added turbo-pickup for races
+(define-extern race-manager-turbo-from-board (function symbol none))
 (defbehavior target-board-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-0 object) (a0-10 uint))
   (cond
@@ -562,6 +564,10 @@
      )
     (else
       (case arg2
+        ;; OG-jetboard added turbo-pickup for races
+        (('turbo-pickup 'turbo-ring)
+          (race-manager-turbo-from-board arg2)
+          )
         (('end-mode)
          (go target-board-get-off (process->handle arg0) #f)
          )
@@ -796,7 +802,7 @@
   (set! (-> self control reaction) target-collision-reaction)
   (set! (-> self control pat-ignore-mask) (new 'static 'pat-surface :noentity #x1 :noboard #x1 :probe #x1))
   (logior! (-> self focus-status) (focus-status board))
-  (logclear! (-> self control root-prim prim-core action) (collide-action can-ride))
+  ;(logclear! (-> self control root-prim prim-core action) (collide-action can-ride)) ;; OG:Jetboard Added so board can ride elevators
   (set! (-> self control bend-target) 1.0)
   (let ((v1-82 (-> self node-list data)))
     (set! (-> v1-82 0 param0) (the-as (function cspace transformq none) cspace<-transformq+world-trans!))
@@ -868,7 +874,7 @@
       )
     (logclear! (-> self focus-status) (focus-status board))
     (logclear! (-> self control root-prim prim-core action) (collide-action stuck-wall-escape no-normal-reset))
-    (logior! (-> self control root-prim prim-core action) (collide-action can-ride))
+    ;(logior! (-> self control root-prim prim-core action) (collide-action can-ride)) ;; OG:Jetboard Added so board can ride elevators
     (set! (-> self control mod-surface) *walk-mods*)
     (logclear! (-> self state-flags) (state-flags sf6))
     (remove-setting! 'string-spline-max-move)

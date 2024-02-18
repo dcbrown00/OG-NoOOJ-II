@@ -2082,7 +2082,7 @@
   :enter (behavior ((arg0 symbol))
     (set-time! (-> self state-time))
     (logior! (-> self focus-status) (focus-status rail))
-    (logior! (-> self control root-prim prim-core action) (collide-action can-ride))
+    ;(logior! (-> self control root-prim prim-core action) (collide-action can-ride)) ;; OG:Jetboard Allows board to ride elevators
     (set! (-> self control mod-surface) *board-ride-mods*)
     (set! (-> self board mods-backup) (-> self control mod-surface))
     (let ((v1-12 (-> self control transv-ctrl)))
@@ -2152,7 +2152,7 @@
     ((-> target-board-stance exit))
     (set! (-> self neck flex-blend) 1.0)
     (logclear! (-> self focus-status) (focus-status rail))
-    (logclear! (-> self control root-prim prim-core action) (collide-action can-ride))
+    ;(logclear! (-> self control root-prim prim-core action) (collide-action can-ride))
     (set! (-> self board ride-rot-old) (-> self board ride-rot))
     (let ((gp-0 (new 'stack-no-clear 'vector)))
       (set! (-> gp-0 quad) (-> self control trans quad))

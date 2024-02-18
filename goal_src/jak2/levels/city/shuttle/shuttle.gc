@@ -257,31 +257,31 @@
   )
 
 
-(defmethod cleanup-for-death ((this citizen-rebel))
-  (with-pp
-    (when (and (zero? (-> this hit-points)) (not (-> this done?)))
-      (let ((a1-0 (new 'stack-no-clear 'event-message-block)))
-        (set! (-> a1-0 from) (process->ppointer pp))
-        (set! (-> a1-0 num-params) 0)
-        (set! (-> a1-0 message) 'fail)
-        (let ((t9-0 send-event-function)
-              (v1-9 (-> *game-info* sub-task-list (-> this task-node)))
-              )
-          (t9-0
-            (handle->process (if (-> v1-9 info)
-                                 (-> v1-9 info manager)
-                                 (the-as handle #f)
-                                 )
-                             )
-            a1-0
-            )
-          )
-        )
-      )
-    ((method-of-type citizen-norm cleanup-for-death) this)
-    (none)
-    )
-  )
+;; (defmethod cleanup-for-death ((this citizen-rebel))
+;;   (with-pp
+;;     (when (and (zero? (-> this hit-points)) (not (-> this done?)))
+;;       (let ((a1-0 (new 'stack-no-clear 'event-message-block)))
+;;         (set! (-> a1-0 from) (process->ppointer pp))
+;;         (set! (-> a1-0 num-params) 0)
+;;         (set! (-> a1-0 message) 'fail)
+;;         (let ((t9-0 send-event-function)
+;;               (v1-9 (-> *game-info* sub-task-list (-> this task-node)))
+;;               )
+;;           (t9-0
+;;             (handle->process (if (-> v1-9 info)
+;;                                  (-> v1-9 info manager)
+;;                                  (the-as handle #f)
+;;                                  )
+;;                              )
+;;             a1-0
+;;             )
+;;           )
+;;         )
+;;       )
+;;     ((method-of-type citizen-norm cleanup-for-death) this)
+;;     (none)
+;;     )
+;;   )
 
 (defstate get-up-front (citizen-rebel)
   :virtual #t
