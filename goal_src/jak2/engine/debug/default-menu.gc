@@ -3055,90 +3055,27 @@
   #f
   )
 
+(defun dm-set-hover-limit ((arg0 object) (arg1 debug-menu-msg) (arg2 int))
+  (if (= arg1 (debug-menu-msg press))
+      (set! *hover-grab-limit* arg2)
+      )
+  *hover-grab-limit*
+  )
+
 (defun debug-menu-context-make-default-menus ((arg0 debug-menu-context))
   (local-vars (sv-16 debug-menu-context))
   (let ((s5-0 (new 'debug 'debug-menu arg0 "Main menu")))
     (debug-menu-context-set-root-menu arg0 s5-0)
+    ;; og-jetboard inserting our own custom menu at the top in place of Artist (moved below Game)
     (debug-menu-append-item
       s5-0
       (debug-menu-make-from-template
         arg0
         '(menu
-           "Artist"
-           (flag "Poly Stats" *stats-poly* dm-boolean-toggle-pick-func)
-           (menu
-             "Memory Stats"
-             (flag "Enable" *stats-memory* dm-boolean-toggle-pick-func)
-             (flag "Short" *stats-memory-short* dm-boolean-toggle-pick-func)
-             (flag "Level 0" 0 dm-stats-memory-func)
-             (flag "Level 1" 1 dm-stats-memory-func)
-             (flag "Level 2" 2 dm-stats-memory-func)
-             (flag "Level 3" 3 dm-stats-memory-func)
-             (flag "Level 4" 4 dm-stats-memory-func)
-             (flag "Level 5" 5 dm-stats-memory-func)
-             )
-           (flag "All Visible" *artist-all-visible* dm-boolean-toggle-pick-func)
-           (flag "Flip Visible" *artist-flip-visible* dm-boolean-toggle-pick-func)
-           (flag "Fix Visible" *artist-fix-visible* dm-boolean-toggle-pick-func)
-           (flag "Fix Frustum" *artist-fix-frustum* dm-boolean-toggle-pick-func)
-           (flag "Manual Sample Point" *manual-sample-point* dm-boolean-toggle-pick-func)
-           (flag "Error Spheres" *artist-error-spheres* dm-boolean-toggle-pick-func)
-           (flag "Use menu subdiv" *artist-use-menu-subdiv* dm-boolean-toggle-pick-func)
-           (float-var "Subdiv Close" close dm-subdiv-float 10 1 #t 1 200 1)
-           (float-var "Subdiv Far" far dm-subdiv-float 10 1 #t 1 200 1)
-           (function "Target Start" #f ,(lambda () (start 'debug (get-current-continue-forced *game-info*))))
-           (function "Target Stop" #f ,(lambda () (stop 'debug)))
-           (menu
-             "Anim Tester"
-             (int-var "Speed" anim-speed dm-subdiv-int 10 10 #t -300 1000)
-             (flag "Apply Align" at-apply-align dm-anim-tester-flag-func)
-             (flag "Show Joint Inf" at-show-joint-info dm-anim-tester-flag-func)
-             (function "Pick Object" at-pick-object dm-anim-tester-func)
-             (function "Pick Joint Anim" at-pick-joint-anim dm-anim-tester-func)
-             (function "Pick Sequence" at-pick-sequence dm-anim-tester-func)
-             (function "Save Sequences" at-save-sequences dm-anim-tester-func)
-             )
-           (flag "Show Entity Errors" *display-entity-errors* dm-boolean-toggle-pick-func)
-           (flag "Sprite Info" *display-sprite-info* dm-boolean-toggle-pick-func)
-           (flag "Sprite Marks" *display-sprite-marks* dm-boolean-toggle-pick-func)
-           (flag "Sprite Spheres" *display-sprite-spheres* dm-boolean-toggle-pick-func)
-           (flag "Time of Day" #f dm-time-of-day-pick-func)
-           (flag "Preload Anims" *preload-spool-anims* dm-boolean-toggle-pick-func)
-           (function
-             "Mike F"
-             #f
-             ,(lambda () (debug-actor "drill-crane-14") (send-event (the-as process-tree *debug-actor*) 'die))
-             )
-           (function
-             "Editor"
-             #f
-             ,(lambda ()
-                (kill-by-type editable-player *active-pool*)
-                (process-spawn editable-player :init editable-player-init #f :to *entity-pool*)
-                (set-master-mode 'game)
-                (none)
-                )
-             )
-           (flag
-             "Screen shot highres enable"
-             #f
-             ,(lambda ((arg0 object) (arg1 debug-menu-msg))
-                (if (= arg1 (debug-menu-msg press))
-                    (set! (-> *screen-shot-work* highres-enable) (not (-> *screen-shot-work* highres-enable)))
-                    )
-                (-> *screen-shot-work* highres-enable)
-                )
-             )
-           (flag
-             "Screen shot hud enable"
-             #f
-             ,(lambda ((arg0 object) (arg1 debug-menu-msg))
-                (if (= arg1 (debug-menu-msg press))
-                    (set! (-> *screen-shot-work* hud-enable) (not (-> *screen-shot-work* hud-enable)))
-                    )
-                (-> *screen-shot-work* hud-enable)
-                )
-             )
+           "NoOOJ"
+           (flag "Force Board?" *force-board?* dm-boolean-toggle-pick-func)
+           (flag "Enable Circle Attack?" *enable-board-circle-attack?* dm-boolean-toggle-pick-func)
+           (int-var "Hover Limit" 0 dm-set-hover-limit 10 1 #t 0 1000)
            )
         )
       )
@@ -3485,6 +3422,90 @@
           )
         (set! s3-2 (cdr s3-2))
         (set! a1-7 (car s3-2))
+        )
+      )
+    ;; og-jetboard moved Artist down here
+    (debug-menu-append-item
+      s5-0
+      (debug-menu-make-from-template
+        arg0
+        '(menu
+           "Artist"
+           (flag "Poly Stats" *stats-poly* dm-boolean-toggle-pick-func)
+           (menu
+             "Memory Stats"
+             (flag "Enable" *stats-memory* dm-boolean-toggle-pick-func)
+             (flag "Short" *stats-memory-short* dm-boolean-toggle-pick-func)
+             (flag "Level 0" 0 dm-stats-memory-func)
+             (flag "Level 1" 1 dm-stats-memory-func)
+             (flag "Level 2" 2 dm-stats-memory-func)
+             (flag "Level 3" 3 dm-stats-memory-func)
+             (flag "Level 4" 4 dm-stats-memory-func)
+             (flag "Level 5" 5 dm-stats-memory-func)
+             )
+           (flag "All Visible" *artist-all-visible* dm-boolean-toggle-pick-func)
+           (flag "Flip Visible" *artist-flip-visible* dm-boolean-toggle-pick-func)
+           (flag "Fix Visible" *artist-fix-visible* dm-boolean-toggle-pick-func)
+           (flag "Fix Frustum" *artist-fix-frustum* dm-boolean-toggle-pick-func)
+           (flag "Manual Sample Point" *manual-sample-point* dm-boolean-toggle-pick-func)
+           (flag "Error Spheres" *artist-error-spheres* dm-boolean-toggle-pick-func)
+           (flag "Use menu subdiv" *artist-use-menu-subdiv* dm-boolean-toggle-pick-func)
+           (float-var "Subdiv Close" close dm-subdiv-float 10 1 #t 1 200 1)
+           (float-var "Subdiv Far" far dm-subdiv-float 10 1 #t 1 200 1)
+           (function "Target Start" #f ,(lambda () (start 'debug (get-current-continue-forced *game-info*))))
+           (function "Target Stop" #f ,(lambda () (stop 'debug)))
+           (menu
+             "Anim Tester"
+             (int-var "Speed" anim-speed dm-subdiv-int 10 10 #t -300 1000)
+             (flag "Apply Align" at-apply-align dm-anim-tester-flag-func)
+             (flag "Show Joint Inf" at-show-joint-info dm-anim-tester-flag-func)
+             (function "Pick Object" at-pick-object dm-anim-tester-func)
+             (function "Pick Joint Anim" at-pick-joint-anim dm-anim-tester-func)
+             (function "Pick Sequence" at-pick-sequence dm-anim-tester-func)
+             (function "Save Sequences" at-save-sequences dm-anim-tester-func)
+             )
+           (flag "Show Entity Errors" *display-entity-errors* dm-boolean-toggle-pick-func)
+           (flag "Sprite Info" *display-sprite-info* dm-boolean-toggle-pick-func)
+           (flag "Sprite Marks" *display-sprite-marks* dm-boolean-toggle-pick-func)
+           (flag "Sprite Spheres" *display-sprite-spheres* dm-boolean-toggle-pick-func)
+           (flag "Time of Day" #f dm-time-of-day-pick-func)
+           (flag "Preload Anims" *preload-spool-anims* dm-boolean-toggle-pick-func)
+           (function
+             "Mike F"
+             #f
+             ,(lambda () (debug-actor "drill-crane-14") (send-event (the-as process-tree *debug-actor*) 'die))
+             )
+           (function
+             "Editor"
+             #f
+             ,(lambda ()
+                (kill-by-type editable-player *active-pool*)
+                (process-spawn editable-player :init editable-player-init #f :to *entity-pool*)
+                (set-master-mode 'game)
+                (none)
+                )
+             )
+           (flag
+             "Screen shot highres enable"
+             #f
+             ,(lambda ((arg0 object) (arg1 debug-menu-msg))
+                (if (= arg1 (debug-menu-msg press))
+                    (set! (-> *screen-shot-work* highres-enable) (not (-> *screen-shot-work* highres-enable)))
+                    )
+                (-> *screen-shot-work* highres-enable)
+                )
+             )
+           (flag
+             "Screen shot hud enable"
+             #f
+             ,(lambda ((arg0 object) (arg1 debug-menu-msg))
+                (if (= arg1 (debug-menu-msg press))
+                    (set! (-> *screen-shot-work* hud-enable) (not (-> *screen-shot-work* hud-enable)))
+                    )
+                (-> *screen-shot-work* hud-enable)
+                )
+             )
+           )
         )
       )
     (debug-menu-append-item

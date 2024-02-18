@@ -465,6 +465,8 @@
     )
   )
 
+(define-extern set-target-board-mods-speed (function float float none))
+
 (set-subtask-hook!
   *game-info*
   (game-task-node city-keira-delivery-delivery)
@@ -490,6 +492,10 @@
   TASK_MANAGER_INIT_HOOK
   (lambda :behavior task-manager
     ()
+    ;; OG:Jetboard set new speed for races 
+    (set-target-board-mods-speed 204800.0 409600.0)
+  
+    ;(vector-copy! (-> *target* root trans) (-> *race-info-array* 0 start-sphere)) ;; OG:Jetboard 
     (set-setting! 'minimap 'clear 0.0 (minimap-flag task-graph))
     (set! (-> self minimap 0) (add-icon! *minimap* self (the-as uint 39) (the-as int #f) (the-as vector #f) 0))
     (set! (-> self sub-state) (the-as uint 0))
@@ -511,6 +517,7 @@
   TASK_MANAGER_UPDATE_HOOK
   (lambda :behavior task-manager
     ()
+    (logior! (-> (the board (ppointer->process (-> *target* board board))) draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard
     (let* ((v1-1 (-> self info index))
            (a1-2 (cond
                    ((or (zero? v1-1) (= v1-1 4) (= v1-1 9))
@@ -555,12 +562,18 @@
   TASK_MANAGER_COMPLETE_HOOK
   (lambda :behavior task-manager
     ()
+    ;; OG:Jetboard reset jetboard speed to normal
+    (set-target-board-mods-speed 102400.0 143360.0)
+
+    (logclear! (-> (the board (ppointer->process (-> *target* board board))) draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard
+    (logclear! (-> *target* draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard 
     (case (-> self info index)
       ((2)
        (format #t "kill race manager~%")
        (send-event (handle->process (-> self slave 0)) 'die)
        )
       )
+      (set-target-board-mods-speed 102400.0 143360.0)
     (none)
     )
   )
