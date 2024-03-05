@@ -517,6 +517,7 @@
   TASK_MANAGER_UPDATE_HOOK
   (lambda :behavior task-manager
     ()
+    (set-target-board-mods-speed 204800.0 409600.0)
     (logior! (-> (the board (ppointer->process (-> *target* board board))) draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard
     (let* ((v1-1 (-> self info index))
            (a1-2 (cond

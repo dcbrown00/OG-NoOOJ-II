@@ -88,6 +88,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! (-> *board-turn-to-mods* transv-max) transv-max) 
   (set! (-> *board-ride-mods* target-speed) target-speed)
   (set! (-> *board-ride-mods* transv-max) transv-max)
+  (set! (-> *board-flip-mods* target-speed) target-speed)
+  (set! (-> *board-flip-mods* transv-max) transv-max)
   (none)
   )
 

@@ -902,10 +902,11 @@
           (* 5.0 204800.0) 
           (* 5.0 409600.0)
           )
+           (set! (-> *target* board thrust-scale) 3.0)
         )
       (else
         ;; turbo over
-        (set-target-board-mods-speed 204800.0 409600.0)
+        (set! (-> *target* board thrust-scale) 1.0)
         )
       )
     )
