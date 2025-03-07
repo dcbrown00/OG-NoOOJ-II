@@ -717,7 +717,7 @@ This commonly includes things such as:
       (('attack)
        (let ((v1-1 (the-as attack-info (-> block param 1))))
          (case (-> v1-1 mode)
-           (('flop)
+           (('flop 'board) ;; OG:Jetboard/No OoJ Added 'board so jetboard can press cas-button objects (weapons/krew factory)
             (when (or (not (or (= (-> v1-1 mode) 'spin) (= (-> v1-1 mode) 'punch)))
                       (logtest? (-> self button-status) (button-status button-status-3))
                       )
@@ -1350,7 +1350,10 @@ This commonly includes things such as:
     (case message
       (('attack)
        (let ((gp-0 (the-as attack-info (-> block param 1))))
-         (when (or (= (-> gp-0 mode) 'spin) (= (-> gp-0 mode) 'spin-air))
+         (when (or
+            (= (-> gp-0 mode) 'spin) (= (-> gp-0 mode) 'spin-air)
+            (= (-> gp-0 mode) 'board) ;; OG:Jetboard/No OoJ Added a 'board check to allow the jetboard to trigger the spinning switches in weapons/krew factory
+          )
            (let* ((s5-0 (the-as object (-> block param 0)))
                   (s4-0 (-> (the-as touching-shapes-entry s5-0) head))
                   )
@@ -1598,8 +1601,9 @@ This commonly includes things such as:
       (('attack)
        (let ((gp-0 (the-as object (-> block param 1))))
          (when (and (not (task-node-closed? (game-task-node castle-boss-resolution)))
-                    (logtest? (-> (the-as attack-info gp-0) penetrate-using) (penetrate flop))
-                    )
+                    (or (logtest? (-> (the-as attack-info gp-0) penetrate-using) (penetrate flop))
+                      (= (-> (the-as attack-info gp-0) mode) 'board) ;; OG:Jetboard/No OoJ Added check for board to allow jetboard to break open the trapdoor in weapons/krew factory
+                    ))
            (go-virtual die)
            #f
            )
