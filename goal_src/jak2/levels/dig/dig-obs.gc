@@ -746,7 +746,10 @@ This commonly includes things such as:
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (case message
       (('attack)
-       (when (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate flop))
+       (when (or
+        (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate flop))
+        (= (-> (the-as attack-info (-> block param 1)) mode) 'board) ;; OG:Jetboard/No OoJ Added check for board to allow jetboard to push buttons in dig-find-totem mission
+        )
          (go-virtual going-down)
          #f
          )
